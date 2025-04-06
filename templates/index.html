@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>Smart Health Predictor</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 
   <style>
 .modal {
@@ -249,34 +247,6 @@ if (prediction === 1) {
 } else {
   message = "✅ Low Health Risk. Keep up the good habits!";
 }
-// Chart for BMI Category
-const ctx = document.getElementById('resultChart').getContext('2d');
-const chart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['BMI'],
-    datasets: [{
-      label: 'BMI Value',
-      data: [bmiValue],
-      backgroundColor: ['#3498db']
-    }]
-  },
-  options: {
-    scales: {
-      y: { beginAtZero: true }
-    },
-    plugins: {
-      title: {
-        display: true,
-        text: `BMI Report: ${bmiCategory}`
-      }
-    }
-  }
-});
-
-document.getElementById("resultChart").style.display = "block";
-document.getElementById("downloadBtn").style.display = "inline-block";
-
 
 
 
@@ -303,18 +273,6 @@ function closeModal() {
   document.getElementById("resultModal").style.display = "none";
 }
 </script>
-<script>
-document.getElementById("downloadBtn").addEventListener("click", function () {
-  const canvas = document.getElementById("resultChart");
-  const imageURL = canvas.toDataURL("image/png");
-  
-  const a = document.createElement("a");
-  a.href = imageURL;
-  a.download = "Health_Report.png";
-  a.click();
-});
-
-</script>
 
 
 <div id="resultModal" class="modal">
@@ -323,9 +281,9 @@ document.getElementById("downloadBtn").addEventListener("click", function () {
     <p id="modalMessage"></p>
     
   </div>
+  
+
 </div>
-<canvas id="resultChart" style="display: none;"></canvas>
-<button id="downloadBtn" style="display: none;">📄 Download Report</button>
 
 
 </body>
