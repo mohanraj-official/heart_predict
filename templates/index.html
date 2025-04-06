@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Smart Health Predictor</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
   <style>
 .modal {
@@ -247,36 +249,34 @@ if (prediction === 1) {
 } else {
   message = "✅ Low Health Risk. Keep up the good habits!";
 }
-
-// Prepare chart data
-const featureLabels = ["Diabetes", "Medication", "Stress", "Sodium", "Diet", "BMI", "Fiber", "Exercise", "Age"];
-const chartCanvas = document.getElementById("featureChart");
-
-if (window.myChart) {
-  window.myChart.destroy();  // Destroy previous chart if exists
-}
-
-window.myChart = new Chart(chartCanvas, {
-  type: "bar",
+// Chart for BMI Category
+const ctx = document.getElementById('resultChart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'bar',
   data: {
-    labels: featureLabels,
+    labels: ['BMI'],
     datasets: [{
-      label: "Your Inputs",
-      data: features,
-      backgroundColor: "#4e73df",
-      borderColor: "#1e3d9e",
-      borderWidth: 1
+      label: 'BMI Value',
+      data: [bmiValue],
+      backgroundColor: ['#3498db']
     }]
   },
   options: {
-    responsive: true,
     scales: {
-      y: {
-        beginAtZero: true
+      y: { beginAtZero: true }
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: `BMI Report: ${bmiCategory}`
       }
     }
   }
 });
+
+document.getElementById("resultChart").style.display = "block";
+document.getElementById("downloadBtn").style.display = "inline-block";
+
 
 
 
@@ -303,6 +303,18 @@ function closeModal() {
   document.getElementById("resultModal").style.display = "none";
 }
 </script>
+<script>
+document.getElementById("downloadBtn").addEventListener("click", function () {
+  const canvas = document.getElementById("resultChart");
+  const imageURL = canvas.toDataURL("image/png");
+  
+  const a = document.createElement("a");
+  a.href = imageURL;
+  a.download = "Health_Report.png";
+  a.click();
+});
+
+</script>
 
 
 <div id="resultModal" class="modal">
@@ -311,9 +323,9 @@ function closeModal() {
     <p id="modalMessage"></p>
     
   </div>
-  <canvas id="featureChart" width="300" height="200" style="margin-top: 20px;"></canvas>
-
 </div>
+<canvas id="resultChart" style="display: none;"></canvas>
+<button id="downloadBtn" style="display: none;">📄 Download Report</button>
 
 
 </body>
