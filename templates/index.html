@@ -3,7 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <title>Smart Health Predictor</title>
-  <link rel="stylesheet" href="style.css">
+<style>
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background-color: white;
+  color: #333;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  max-width: 400px;
+  width: 90%;
+}
+.close-btn {
+  float: right;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #888;
+}
+.close-btn:hover {
+  color: #000;
+}
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 700px;
+      width: 100%;
+      animation: fadeIn 0.8s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #34495e;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 15px;
+    }
+    .form-grid > div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border 0.3s ease;
+    }
+    input{
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border 0.3s ease;
+}
+    input:focus, select:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+    .form-actions {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-top: 30px;
+    }
+    button {
+      background: #2980b9;
+      color: white;
+      padding: 14px 30px;
+      border: none;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #1c5980;
+    }
+    #loader {
+      display: none;
+      margin: 20px auto;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #result {
+      margin-top: 25px;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      display: none;
+      transition: all 0.5s ease-in-out;
+    }
+
+
+
+</style>
+
 </head>
 <body>
   <div class="form-container">
@@ -72,7 +209,92 @@
   
 
 </div>
-<script src = "script.js"></script>
+
+
+
+<script>
+
+
+ document.getElementById("predictionForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const features = [
+        +document.getElementById("diabetes").value,
+        +document.getElementById("medication").value,
+        +document.getElementById("stress").value,
+        +document.getElementById("sodium").value,
+        +document.getElementById("dietType").value,
+        +document.getElementById("bmi").value,
+        +document.getElementById("fiber").value,
+        +document.getElementById("exercise").value,
+        +document.getElementById("age").value
+      ];
+
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("result").style.display = "none";
+if (features.some(f => isNaN(f))) {
+  alert("Please fill all fields correctly.");
+  document.getElementById("loader").style.display = "none";
+  return;
+}
+
+
+      fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: features })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("loader").style.display = "none";
+
+const bmiValue = features[5];
+let bmiCategory = "";
+
+if (bmiValue < 18.5) bmiCategory = "Underweight";
+else if (bmiValue < 25) bmiCategory = "Normal weight";
+else if (bmiValue < 30) bmiCategory = "Overweight";
+else bmiCategory = "Obese";
+
+document.getElementById("bmiTooltip").title = `BMI Category: ${bmiCategory}`;
+
+const prediction = parseInt(data.prediction);
+let message = "";
+
+
+if (prediction === 1) {
+  message = "⚠️ High Health Risk! Consult a doctor.";
+} else {
+  message = "✅ Low Health Risk. Keep up the good habits!";
+}
+
+
+
+// Show popup modal
+document.getElementById("modalMessage").innerHTML = `
+  <p style="font-size: 18px; margin-bottom: 10px;">${message}</p>
+  <ul style="padding-left: 20px; text-align: left;">
+    ${data.tips.map(tip => `<li>${tip}</li>`).join('')}
+  </ul>
+`;
+document.getElementById("resultModal").style.display = "flex";
+}
+)
+      .catch(error => {
+        console.error("Error:", error);
+        document.getElementById("loader").style.display = "none";
+        const resultBox = document.getElementById("result");
+        resultBox.textContent = "⚠️ Error occurred. Try again later.";
+        resultBox.style.color = "#e67e22";
+        resultBox.style.display = "block";
+      });
+    });
+function closeModal() {
+  document.getElementById("resultModal").style.display = "none";
+}
+
+
+</script>
 
 </body>
 </html>
