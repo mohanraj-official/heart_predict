@@ -254,7 +254,12 @@ document.getElementById("modalMessage").textContent = message;
 document.getElementById("resultModal").style.display = "flex";
 
 // Play sound
-document.getElementById(sound).play();
+const audio = document.getElementById(sound);
+if (audio) {
+  audio.currentTime = 0; // rewind to start
+  audio.play().catch(e => console.error("Audio play error:", e));
+}
+
 }
 )
       .catch(error => {
