@@ -238,28 +238,23 @@ document.getElementById("bmiTooltip").title = `BMI Category: ${bmiCategory}`;
 
 const prediction = parseInt(data.prediction);
 let message = "";
-let sound = "";
+
 
 if (prediction === 1) {
   message = "⚠️ High Health Risk! Consult a doctor.";
-  sound = "alertSound";
 } else {
   message = "✅ Low Health Risk. Keep up the good habits!";
-  sound = "successSound";
 }
 
 
 // Show popup modal
-document.getElementById("modalMessage").textContent = message;
+document.getElementById("modalMessage").innerHTML = `
+  <p style="font-size: 18px; margin-bottom: 10px;">${message}</p>
+  <ul style="padding-left: 20px; text-align: left;">
+    ${data.tips.map(tip => `<li>${tip}</li>`).join('')}
+  </ul>
+`;
 document.getElementById("resultModal").style.display = "flex";
-
-// Play sound
-const audio = document.getElementById(sound);
-if (audio) {
-  audio.currentTime = 0; // rewind to start
-  audio.play().catch(e => console.error("Audio play error:", e));
-}
-
 }
 )
       .catch(error => {
@@ -269,7 +264,6 @@ if (audio) {
         resultBox.textContent = "⚠️ Error occurred. Try again later.";
         resultBox.style.color = "#e67e22";
         resultBox.style.display = "block";
-        document.getElementById("alertSound").play();
       });
     });
 function closeModal() {
@@ -284,8 +278,6 @@ function closeModal() {
     <p id="modalMessage"></p>
   </div>
 </div>
-<audio id="alertSound" src="alert.mp3"></audio>
-<audio id="successSound" src="success.mp3"></audio>
 
 
 </body>

@@ -23,9 +23,35 @@ def predict():
 
         print("Received Features:", features)  # Debug
         prediction = model.predict(features)[0]
+        # Sample logic for health tips
+        if prediction == 1:
+            result_message = "⚠️ High Risk of Heart Attack"
+            tips = [
+            "Eat a heart-healthy diet (less salt and fat)",
+            "Exercise regularly (at least 30 mins/day)",
+            "Avoid smoking and alcohol",
+            "Regular medical checkups"
+            ]
+        else:
+            result_message = "✅ Low Risk of Heart Attack"
+            tips = [
+            "Maintain your healthy lifestyle",
+            "Keep regular checkups",
+            "Stay active and manage stress",
+            "Avoid junk food and stay hydrated"
+            ]
+
+        return jsonify({
+        'prediction': int(prediction),
+        'message': result_message,
+        'tips': tips
+        })
+
         print("Prediction:", prediction)  # Debug
 
-        return jsonify({"prediction": int(prediction)})
+        return jsonify({ 'prediction': int(prediction),
+    'message': message,
+    'tips': tips)})
     except Exception as e:
         print("Error occurred:", e)
         return jsonify({"error": "Something went wrong!"}), 500
