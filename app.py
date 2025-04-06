@@ -51,7 +51,7 @@ def predict():
 
         return jsonify({ 'prediction': int(prediction),
     'message': message,
-    'tips': tips)})
+    'tips': tips})
     except Exception as e:
         print("Error occurred:", e)
         return jsonify({"error": "Something went wrong!"}), 500
