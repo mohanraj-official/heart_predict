@@ -219,10 +219,28 @@
       .then(response => response.json())
       .then(data => {
         document.getElementById("loader").style.display = "none";
+const bmiValue = features[5];
+let bmiCategory = "";
+
+if (bmiValue < 18.5) bmiCategory = "Underweight";
+else if (bmiValue < 25) bmiCategory = "Normal weight";
+else if (bmiValue < 30) bmiCategory = "Overweight";
+else bmiCategory = "Obese";
+
+document.getElementById("bmiTooltip").title = BMI Category: ${bmiCategory};
 
 const prediction = parseInt(data.prediction);
 let message = "";
 let sound = "";
+
+if (prediction === 1) {
+  message = "⚠️ High Health Risk! Consult a doctor.";
+  sound = "alertSound";
+} else {
+  message = "✅ Low Health Risk. Keep up the good habits!";
+  sound = "successSound";
+}
+
 
 // Show popup modal
 document.getElementById("modalMessage").textContent = message;
@@ -245,19 +263,7 @@ document.getElementById(sound).play();
 function closeModal() {
   document.getElementById("resultModal").style.display = "none";
 }
-
-const bmiValue = features[5];
-let bmiCategory = "";
-
-if (bmiValue < 18.5) bmiCategory = "Underweight";
-else if (bmiValue < 25) bmiCategory = "Normal weight";
-else if (bmiValue < 30) bmiCategory = "Overweight";
-else bmiCategory = "Obese";
-
-document.getElementById("bmiTooltip").title = `BMI Category: ${bmiCategory}`;
-
-
-  </script>
+</script>
 
 
 <div id="resultModal" class="modal">
@@ -266,6 +272,9 @@ document.getElementById("bmiTooltip").title = `BMI Category: ${bmiCategory}`;
     <p id="modalMessage"></p>
   </div>
 </div>
+<audio id="alertSound" src="alert.mp3"></audio>
+<audio id="successSound" src="success.mp3"></audio>
+
 
 </body>
 </html>
