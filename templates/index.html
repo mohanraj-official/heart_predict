@@ -225,6 +225,7 @@ if (features.some(f => isNaN(f))) {
       .then(response => response.json())
       .then(data => {
         document.getElementById("loader").style.display = "none";
+
 const bmiValue = features[5];
 let bmiCategory = "";
 
@@ -233,7 +234,7 @@ else if (bmiValue < 25) bmiCategory = "Normal weight";
 else if (bmiValue < 30) bmiCategory = "Overweight";
 else bmiCategory = "Obese";
 
-document.getElementById("bmiTooltip").title = 'BMI Category: ${bmiCategory}';
+document.getElementById("bmiTooltip").title = `BMI Category: ${bmiCategory}`;
 
 const prediction = parseInt(data.prediction);
 let message = "";
