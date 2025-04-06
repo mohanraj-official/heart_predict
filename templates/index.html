@@ -6,6 +6,65 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+
+
+/* Theme Toggle Button */
+#themeToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  padding: 10px 14px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: background 0.3s ease;
+}
+
+#themeToggle:hover {
+  background: #ddd;
+}
+
+/* Dark Theme Styles */
+body.dark-mode {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: #ecf0f1;
+}
+
+body.dark-mode .form-container {
+  background: #2c3e50;
+  color: #ecf0f1;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+  background-color: #3d566e;
+  color: white;
+  border-color: #555;
+}
+
+body.dark-mode input::placeholder {
+  color: #ccc;
+}
+
+body.dark-mode button {
+  background-color: #1abc9c;
+}
+
+body.dark-mode button:hover {
+  background-color: #16a085;
+}
+
+body.dark-mode .modal-content {
+  background-color: #3b3b3b;
+  color: #f1f1f1;
+}
+
+
+
 .modal {
   display: none;
   position: fixed;
@@ -275,6 +334,18 @@ function closeModal() {
 </script>
 
 
+<script>
+  const toggleButton = document.getElementById("themeToggle");
+
+  toggleButton.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    // Change icon: 🌙 (dark mode icon) ↔ ☀️ (light mode icon)
+    toggleButton.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+  });
+</script>
+
+
+
 <div id="resultModal" class="modal">
   <div class="modal-content">
     <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -284,6 +355,7 @@ function closeModal() {
   
 
 </div>
+<button id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
 
 
 </body>
