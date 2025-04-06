@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Health Predictor</title>
+  <style>
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background-color: white;
+  color: #333;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  max-width: 400px;
+  width: 90%;
+}
+.close-btn {
+  float: right;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #888;
+}
+.close-btn:hover {
+  color: #000;
+}
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 700px;
+      width: 100%;
+      animation: fadeIn 0.8s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #34495e;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border 0.3s ease;
+    }
+    input:focus, select:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+    .form-actions {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-top: 30px;
+    }
+    button {
+      background: #2980b9;
+      color: white;
+      padding: 14px 30px;
+      border: none;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #1c5980;
+    }
+    #loader {
+      display: none;
+      margin: 20px auto;
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #result {
+      margin-top: 25px;
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      display: none;
+      transition: all 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Check Your Health Risk</h2>
+    <form id="predictionForm" class="form-grid">
+      <div>
+        <label for="diabetes">Diabetes</label>
+        <select id="diabetes"><option value="1">Yes</option><option value="0">No</option></select>
+      </div>
+      <div>
+        <label for="medication">Medication</label>
+        <select id="medication"><option value="1">Yes</option><option value="0">No</option></select>
+      </div>
+      <div>
+        <label for="stress">Stress (1-10)</label>
+        <input type="number" id="stress" min="1" max="10">
+      </div>
+      <div>
+        <label for="sodium">Sodium (mg)</label>
+        <input type="number" id="sodium">
+      </div>
+      <div>
+        <label for="dietType">Diet Type</label>
+        <select id="dietType">
+          <option value="0">Vegetarian</option>
+          <option value="1">Non-Vegetarian</option>
+          <option value="2">Vegan</option>
+        </select>
+      </div>
+      <div>
+        <label for="bmi">BMI</label>
+        <input type="number" id="bmi" step="0.1">
+      </div>
+      <div>
+        <label for="fiber">Fiber Intake (g)</label>
+        <input type="number" id="fiber">
+      </div>
+      <div>
+        <label for="exercise">Exercise Level (1-5)</label>
+        <input type="number" id="exercise" min="1" max="5">
+      </div>
+      <div>
+        <label for="age">Age</label>
+        <input type="number" id="age">
+      </div>
+      <div class="form-actions">
+        <button type="submit">Predict</button>
+      </div>
+    </form>
+    <div id="loader"></div>
+    <div id="result"></div>
+  </div>
+
+  <audio id="positiveSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
+  <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-classic-click-1117.mp3"></audio>
+
+  <script>
+    document.getElementById("predictionForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const features = [
+        +document.getElementById("diabetes").value,
+        +document.getElementById("medication").value,
+        +document.getElementById("stress").value,
+        +document.getElementById("sodium").value,
+        +document.getElementById("dietType").value,
+        +document.getElementById("bmi").value,
+        +document.getElementById("fiber").value,
+        +document.getElementById("exercise").value,
+        +document.getElementById("age").value
+      ];
+
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("result").style.display = "none";
+
+      fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: features })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("loader").style.display = "none";
+
+const prediction = parseInt(data.prediction);
+let message = "";
+let sound = "";
+
+if (prediction === 0) {
+  message = "Great news! You are not at risk. Maintain a healthy lifestyle.";
+  sound = "positiveSound";
+} else {
+  message = "Alert! You may be at risk of heart disease. Please consult a doctor.";
+  sound = "alertSound";
+}
+
+// Show popup modal
+document.getElementById("modalMessage").textContent = message;
+document.getElementById("resultModal").style.display = "flex";
+
+// Play sound
+document.getElementById(sound).play();
+}
+)
+      .catch(error => {
+        console.error("Error:", error);
+        document.getElementById("loader").style.display = "none";
+        const resultBox = document.getElementById("result");
+        resultBox.textContent = "⚠️ Error occurred. Try again later.";
+        resultBox.style.color = "#e67e22";
+        resultBox.style.display = "block";
+        document.getElementById("alertSound").play();
+      });
+    });
+function closeModal() {
+  document.getElementById("resultModal").style.display = "none";
+}
+
+  </script>
+<div id="resultModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <p id="modalMessage"></p>
+  </div>
+</div>
+
+</body>
+</html>
