@@ -1,14 +1,39 @@
-<!DOCTYPE html> <!-- # --> HTML5 Document Declaration -->
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8"> <!-- # --> Character Encoding -->
-  <title>Smart Health Predictor</title> <!-- # --> Title in browser tab -->
-  <link rel="icon" type="image/png" href="favicon.png"> <!-- # --> Favicon -->
-
-  <!-- ========== CSS STYLES ========== -->
+  <meta charset="UTF-8">
+  <title>Smart Health Predictor</title>
   <style>
-    /* # --> Page background and font */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background-color: white;
+  color: #333;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  max-width: 400px;
+  width: 90%;
+}
+.close-btn {
+  float: right;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #888;
+}
+.close-btn:hover {
+  color: #000;
+}
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
@@ -19,8 +44,6 @@
       min-height: 100vh;
       margin: 0;
     }
-
-    /* # --> Container for form */
     .form-container {
       background: white;
       padding: 40px;
@@ -30,55 +53,66 @@
       width: 100%;
       animation: fadeIn 0.8s ease;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     h2 {
       text-align: center;
+      margin-bottom: 25px;
       color: #34495e;
     }
-
-    /* # --> Form grid layout */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 15px;
     }
+    .form-grid > div {
+      display: flex;
+      flex-direction: column;
+    }
 
     label {
       font-weight: bold;
+      display: block;
       margin-bottom: 6px;
     }
-
     input, select {
+      width: 100%;
       padding: 10px;
-      border-radius: 8px;
       border: 1px solid #ccc;
+      border-radius: 8px;
       transition: border 0.3s ease;
     }
-
+    input{
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border 0.3s ease;
+}
     input:focus, select:focus {
       border-color: #2980b9;
+      outline: none;
     }
-
     .form-actions {
+      grid-column: 1 / -1;
       text-align: center;
       margin-top: 30px;
     }
-
     button {
       background: #2980b9;
       color: white;
       padding: 14px 30px;
-      border-radius: 25px;
-      cursor: pointer;
       border: none;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
     }
-
-    /* # --> Loader spinner style */
+    button:hover {
+      background: #1c5980;
+    }
     #loader {
       display: none;
       margin: 20px auto;
@@ -89,103 +123,79 @@
       height: 40px;
       animation: spin 1s linear infinite;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* # --> Result box */
     #result {
       margin-top: 25px;
       text-align: center;
+      font-size: 1.2em;
       font-weight: bold;
       display: none;
-    }
-
-    /* # --> Modal style */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background-color: white;
-      padding: 20px 30px;
-      border-radius: 12px;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .close-btn {
-      float: right;
-      font-size: 1.5em;
-      cursor: pointer;
+      transition: all 0.5s ease-in-out;
     }
   </style>
 </head>
-
 <body>
-
-  <!-- ========== FORM UI SECTION ========== -->
   <div class="form-container">
     <h2>Check Your Health Risk</h2>
-
     <form id="predictionForm" class="form-grid">
-      <!-- # --> Yes/No Inputs -->
-      <div><label for="diabetes">Diabetes</label><select id="diabetes"><option value="1">Yes</option><option value="0">No</option></select></div>
-      <div><label for="medication">Medication</label><select id="medication"><option value="1">Yes</option><option value="0">No</option></select></div>
-
-      <!-- # --> Number Inputs -->
-      <div><label for="stress">Stress (1-10)</label><input type="number" id="stress" min="1" max="10" required></div>
-      <div><label for="sodium">Sodium</label><input type="number" id="sodium" placeholder="Normal: 135mg - 145mg" required></div>
-
-      <!-- # --> Diet Selection -->
-      <div><label for="dietType">Diet Type</label><select id="dietType"><option value="0">Vegetarian</option><option value="1">Non-Vegetarian</option><option value="2">Vegan</option></select></div>
-
-      <!-- # --> BMI with Tooltip -->
       <div>
-        <label for="bmi">BMI <span id="bmiTooltip" title="BMI Category: Will be shown after prediction">🛈</span></label>
-        <input type="number" id="bmi" step="0.1" placeholder="Normal: 18.5 - 24.9" required>
+        <label for="diabetes">Diabetes</label>
+        <select id="diabetes"><option value="1">Yes</option><option value="0">No</option></select>
       </div>
+      <div>
+        <label for="medication">Medication</label>
+        <select id="medication"><option value="1">Yes</option><option value="0">No</option></select>
+      </div>
+      <div>
+        <label for="stress">Stress (1-10)</label>
+        <input type="number" id="stress" min="1" max="10">
+      </div>
+      <div>
+        <label for="sodium">Sodium</label>
+        <input type="number" id="sodium" placeholder = "Normal: 135mg - 145mg">
+      </div>
+      <div>
+        <label for="dietType">Diet Type</label>
+        <select id="dietType">
+          <option value="0">Vegetarian</option>
+          <option value="1">Non-Vegetarian</option>
+          <option value="2">Vegan</option>
+        </select>
+      </div>
+      <div>
+  <label for="bmi">BMI
+    <span id="bmiTooltip" style="cursor: help;" title="BMI Category: Will be shown after prediction">🛈</span>
+  </label>
+  <input type="number" id="bmi" step="0.1" placeholder="Normal: 18.5 - 24.9">
+</div>
 
-      <!-- # --> Fiber, Exercise, Age -->
-      <div><label for="fiber">Fiber Intake</label><input type="number" id="fiber" required></div>
-      <div><label for="exercise">Exercise Level (1-5)</label><input type="number" id="exercise" min="1" max="5" required></div>
-      <div><label for="age">Age</label><input type="number" id="age" required></div>
-
-      <!-- # --> Submit Button -->
-      <div class="form-actions"><button type="submit">Predict</button></div>
+      <div>
+        <label for="fiber">Fiber Intake</label>
+        <input type="number" id="fiber" placeholder = "General: 25gm - 30gm">
+      </div>
+      <div>
+        <label for="exercise">Exercise Level (1-5)</label>
+        <input type="number" id="exercise" min="1" max="5">
+      </div>
+      <div>
+        <label for="age">Age</label>
+        <input type="number" id="age">
+      </div>
+      <div class="form-actions">
+        <button type="submit">Predict</button>
+      </div>
     </form>
-
-    <!-- # --> Loading spinner -->
     <div id="loader"></div>
+    <div id="result"></div>
   </div>
 
-  <!-- ========== RESULT MODAL ========== -->
-  <div id="resultModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      <p id="modalMessage"></p>
-    </div>
-  </div>
-
-  <!-- ========== SOUND FILES ========== -->
-  <audio id="alertSound" src="alert.wav"></audio> <!-- # --> Plays on high risk -->
-  <audio id="successSound" src="success.wav"></audio> <!-- # --> Plays on low risk -->
-
-  <!-- ========== JAVASCRIPT SECTION ========== -->
   <script>
-    document.getElementById("predictionForm").addEventListener("submit", function (e) {
-      e.preventDefault(); // # --> Prevent page reload
+    document.getElementById("predictionForm").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-      // # --> Collect input values
       const features = [
         +document.getElementById("diabetes").value,
         +document.getElementById("medication").value,
@@ -198,18 +208,15 @@
         +document.getElementById("age").value
       ];
 
-      // # --> Show loader
       document.getElementById("loader").style.display = "block";
       document.getElementById("result").style.display = "none";
+if (features.some(f => isNaN(f))) {
+  alert("Please fill all fields correctly.");
+  document.getElementById("loader").style.display = "none";
+  return;
+}
 
-      // # --> Form validation
-      if (features.some(f => isNaN(f))) {
-        alert("Please fill all fields correctly.");
-        document.getElementById("loader").style.display = "none";
-        return;
-      }
 
-      // # --> Fetch prediction from backend
       fetch("/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -218,35 +225,37 @@
       .then(response => response.json())
       .then(data => {
         document.getElementById("loader").style.display = "none";
+const bmiValue = features[5];
+let bmiCategory = "";
 
-        // # --> BMI Category tooltip
-        const bmiValue = features[5];
-        let bmiCategory = "";
-        if (bmiValue < 18.5) bmiCategory = "Underweight";
-        else if (bmiValue < 25) bmiCategory = "Normal weight";
-        else if (bmiValue < 30) bmiCategory = "Overweight";
-        else bmiCategory = "Obese";
-        document.getElementById("bmiTooltip").title = `BMI Category: ${bmiCategory}`;
+if (bmiValue < 18.5) bmiCategory = "Underweight";
+else if (bmiValue < 25) bmiCategory = "Normal weight";
+else if (bmiValue < 30) bmiCategory = "Overweight";
+else bmiCategory = "Obese";
 
-        // # --> Predict result
-        const prediction = parseInt(data.prediction);
-        let message = "", sound = "";
+document.getElementById("bmiTooltip").title = 'BMI Category: ${bmiCategory}';
 
-        if (prediction === 1) {
-          message = "⚠️ High Health Risk! Consult a doctor.";
-          sound = "alertSound";
-        } else {
-          message = "✅ Low Health Risk. Keep up the good habits!";
-          sound = "successSound";
-        }
+const prediction = parseInt(data.prediction);
+let message = "";
+let sound = "";
 
-        // # --> Show modal result and play sound
-        document.getElementById("modalMessage").textContent = message;
-        document.getElementById("resultModal").style.display = "flex";
-        document.getElementById("result").textContent = message;
-        document.getElementById("result").style.display = "block";
-        document.getElementById(sound).play();
-      })
+if (prediction === 1) {
+  message = "⚠️ High Health Risk! Consult a doctor.";
+  sound = "alertSound";
+} else {
+  message = "✅ Low Health Risk. Keep up the good habits!";
+  sound = "successSound";
+}
+
+
+// Show popup modal
+document.getElementById("modalMessage").textContent = message;
+document.getElementById("resultModal").style.display = "flex";
+
+// Play sound
+document.getElementById(sound).play();
+}
+)
       .catch(error => {
         console.error("Error:", error);
         document.getElementById("loader").style.display = "none";
@@ -257,13 +266,21 @@
         document.getElementById("alertSound").play();
       });
     });
+function closeModal() {
+  document.getElementById("resultModal").style.display = "none";
+}
+</script>
 
-    // # --> Close modal function
-    function closeModal() {
-      document.getElementById("resultModal").style.display = "none";
-    }
-  </script>
+
+<div id="resultModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <p id="modalMessage"></p>
+  </div>
+</div>
+<audio id="alertSound" src="alert.mp3"></audio>
+<audio id="successSound" src="success.mp3"></audio>
+
 
 </body>
 </html>
-
