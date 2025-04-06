@@ -166,9 +166,12 @@
         </select>
       </div>
       <div>
-        <label for="bmi">BMI</label>
-        <input type="number" id="bmi" step="0.1" placeholder = "Normal: 18.5 - 24.9">
-      </div>
+  <label for="bmi">BMI
+    <span id="bmiTooltip" style="cursor: help;" title="BMI Category: Will be shown after prediction">🛈</span>
+  </label>
+  <input type="number" id="bmi" step="0.1" placeholder="Normal: 18.5 - 24.9">
+</div>
+
       <div>
         <label for="fiber">Fiber Intake</label>
         <input type="number" id="fiber" placeholder = "General: 25gm - 30gm">
@@ -188,9 +191,6 @@
     <div id="loader"></div>
     <div id="result"></div>
   </div>
-
-  <audio id="positiveSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
-  <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-classic-click-1117.mp3"></audio>
 
   <script>
     document.getElementById("predictionForm").addEventListener("submit", function(e) {
@@ -224,14 +224,6 @@ const prediction = parseInt(data.prediction);
 let message = "";
 let sound = "";
 
-if (prediction === 0) {
-  message = "Great news! You are not at risk. Maintain a healthy lifestyle.";
-  sound = "positiveSound";
-} else {
-  message = "Alert! You may be at risk of heart disease. Please consult a doctor.";
-  sound = "alertSound";
-}
-
 // Show popup modal
 document.getElementById("modalMessage").textContent = message;
 document.getElementById("resultModal").style.display = "flex";
@@ -254,7 +246,20 @@ function closeModal() {
   document.getElementById("resultModal").style.display = "none";
 }
 
+const bmiValue = features[5];
+let bmiCategory = "";
+
+if (bmiValue < 18.5) bmiCategory = "Underweight";
+else if (bmiValue < 25) bmiCategory = "Normal weight";
+else if (bmiValue < 30) bmiCategory = "Overweight";
+else bmiCategory = "Obese";
+
+document.getElementById("bmiTooltip").title = `BMI Category: ${bmiCategory}`;
+
+
   </script>
+
+
 <div id="resultModal" class="modal">
   <div class="modal-content">
     <span class="close-btn" onclick="closeModal()">&times;</span>
