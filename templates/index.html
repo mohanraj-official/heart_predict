@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Smart Health Predictor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
 .modal {
   display: none;
@@ -246,6 +248,37 @@ if (prediction === 1) {
   message = "✅ Low Health Risk. Keep up the good habits!";
 }
 
+// Prepare chart data
+const featureLabels = ["Diabetes", "Medication", "Stress", "Sodium", "Diet", "BMI", "Fiber", "Exercise", "Age"];
+const chartCanvas = document.getElementById("featureChart");
+
+if (window.myChart) {
+  window.myChart.destroy();  // Destroy previous chart if exists
+}
+
+window.myChart = new Chart(chartCanvas, {
+  type: "bar",
+  data: {
+    labels: featureLabels,
+    datasets: [{
+      label: "Your Inputs",
+      data: features,
+      backgroundColor: "#4e73df",
+      borderColor: "#1e3d9e",
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+
+
 
 // Show popup modal
 document.getElementById("modalMessage").innerHTML = `
@@ -276,7 +309,10 @@ function closeModal() {
   <div class="modal-content">
     <span class="close-btn" onclick="closeModal()">&times;</span>
     <p id="modalMessage"></p>
+    
   </div>
+  <canvas id="featureChart" width="300" height="200" style="margin-top: 20px;"></canvas>
+
 </div>
 
 
