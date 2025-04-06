@@ -64,9 +64,14 @@
     }
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 15px;
     }
+    .form-grid > div {
+      display: flex;
+      flex-direction: column;
+    }
+
     label {
       font-weight: bold;
       display: block;
@@ -79,6 +84,13 @@
       border-radius: 8px;
       transition: border 0.3s ease;
     }
+    input{
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: border 0.3s ease;
+}
     input:focus, select:focus {
       border-color: #2980b9;
       outline: none;
@@ -142,8 +154,8 @@
         <input type="number" id="stress" min="1" max="10">
       </div>
       <div>
-        <label for="sodium">Sodium (mg)</label>
-        <input type="number" id="sodium">
+        <label for="sodium">Sodium</label>
+        <input type="number" id="sodium" placeholder = "Normal: 135mg - 145mg">
       </div>
       <div>
         <label for="dietType">Diet Type</label>
@@ -155,11 +167,11 @@
       </div>
       <div>
         <label for="bmi">BMI</label>
-        <input type="number" id="bmi" step="0.1">
+        <input type="number" id="bmi" step="0.1" placeholder = "Normal: 18.5 - 24.9">
       </div>
       <div>
-        <label for="fiber">Fiber Intake (g)</label>
-        <input type="number" id="fiber">
+        <label for="fiber">Fiber Intake</label>
+        <input type="number" id="fiber" placeholder = "General: 25gm - 30gm">
       </div>
       <div>
         <label for="exercise">Exercise Level (1-5)</label>
